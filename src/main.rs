@@ -1,4 +1,5 @@
 mod cli;
+mod tap_resolver;
 
 fn main() {
     if let Err(err) = cli::run() {
