@@ -6,10 +6,9 @@ use core_graphics::event::{
     CGEventTapProxy, CGEventType, CallbackResult, EventField,
 };
 
-use crate::{
-    key_emitter,
-    tap_resolver::{Input, Key, TapResolver},
-};
+use crate::key_emitter;
+use crate::permission;
+use crate::tap_resolver::{Input, Key, TapResolver};
 
 /// Let Command (kVK_Command)
 const KEYCODE_LEFT_COMMAND: i64 = 0x37;
@@ -17,6 +16,9 @@ const KEYCODE_LEFT_COMMAND: i64 = 0x37;
 const KEYCODE_RIGHT_COMMAND: i64 = 0x36;
 
 pub fn listen() -> Result<(), Box<dyn Error>> {
+    if !permission::prompt_for_trust() {
+        return Err("Accessibility permission is required".into());
+    }
     let resolver = Mutex::new(TapResolver::new());
 
     let event = vec![
