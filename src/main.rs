@@ -1,4 +1,6 @@
 mod cli;
+mod key_emitter;
+mod listener;
 mod tap_resolver;
 
 fn main() {

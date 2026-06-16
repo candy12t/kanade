@@ -1,4 +1,8 @@
-use clap::{Error, Parser, Subcommand};
+use std::error::Error;
+
+use clap::{Parser, Subcommand};
+
+use crate::listener;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None, arg_required_else_help = true)]
@@ -21,10 +25,10 @@ enum Commands {
     Status,
 }
 
-pub fn run() -> Result<(), Error> {
+pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match cli.command {
-        Commands::Run => Ok(()),
+        Commands::Run => listener::listen(),
         Commands::Install => Ok(()),
         Commands::Uninstall => Ok(()),
         Commands::Restart => Ok(()),
