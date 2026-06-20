@@ -36,7 +36,10 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          packages = [ rustToolchain ];
+          packages = [
+            rustToolchain
+            pkgs.cargo-dist
+          ];
         };
 
         packages.default = buildRustPackage { };
