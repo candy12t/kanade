@@ -1,7 +1,7 @@
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use clap::{Parser, Subcommand};
 
-use crate::{listener, plist};
+use crate::{agent, listener, plist};
 
 const LOG_PATH: &str = "/tmp/kanade.log";
 
@@ -22,7 +22,7 @@ enum Commands {
     Uninstall,
     /// Restart the launchd agent (after an update or granting permission)
     Restart,
-    /// Show permission and agent
+    /// Show the launchd agent staus
     Status,
 }
 
@@ -32,8 +32,8 @@ pub fn run() -> Result<()> {
         Commands::Run => listener::listen(),
         Commands::Install => install(),
         Commands::Uninstall => uninstall(),
-        Commands::Restart => Ok(()),
-        Commands::Status => Ok(()),
+        Commands::Restart => restart(),
+        Commands::Status => status(),
     }
 }
 
@@ -42,13 +42,47 @@ fn install() -> Result<()> {
     let content = plist::render(&exec.to_string_lossy(), LOG_PATH);
     plist::write(&content)?;
 
+    if agent::is_loaded() {
+        agent::bootout()?;
+    }
+    agent::bootstrap(&plist::plist_path()?)?;
+
     println!("kanade: installed and started");
     Ok(())
 }
 
 fn uninstall() -> Result<()> {
+    if agent::is_loaded() {
+        agent::bootout()?;
+    }
     plist::remove()?;
 
     println!("kanade: uninstalled");
+    Ok(())
+}
+
+fn restart() -> Result<()> {
+    if !agent::is_loaded() {
+        return Err(anyhow!("not installed. run `kanade install` first"));
+    }
+    agent::kickstart()?;
+
+    println!("kanade: restarted");
+    Ok(())
+}
+
+fn status() -> Result<()> {
+    match agent::state() {
+        agent::State::Running { pid } => match pid {
+            Some(pid) => println!("launchd agent: running (pid {pid})"),
+            None => println!("launchd agent: running"),
+        },
+        agent::State::NotRunning => {
+            println!("launchd agent: loaded (not running)");
+        }
+        agent::State::NotInstalled => {
+            println!("launchd agent: not installed");
+        }
+    }
     Ok(())
 }

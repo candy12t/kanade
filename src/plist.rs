@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use anyhow::Result;
 
-const LABEL: &str = "io.github.candy12t.kanade";
+pub const LABEL: &str = "io.github.candy12t.kanade";
 const TEMPLATE: &str = include_str!("../templates/agent.plist");
 
 pub fn plist_path() -> Result<PathBuf> {
