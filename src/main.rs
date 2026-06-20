@@ -2,6 +2,7 @@ mod cli;
 mod key_emitter;
 mod listener;
 mod permission;
+mod plist;
 mod tap_resolver;
 
 fn main() {

@@ -2,7 +2,9 @@ use std::error::Error;
 
 use clap::{Parser, Subcommand};
 
-use crate::listener;
+use crate::{listener, plist};
+
+const LOG_PATH: &str = "/tmp/kanade.log";
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None, arg_required_else_help = true)]
@@ -29,9 +31,25 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
     match cli.command {
         Commands::Run => listener::listen(),
-        Commands::Install => Ok(()),
-        Commands::Uninstall => Ok(()),
+        Commands::Install => install(),
+        Commands::Uninstall => uninstall(),
         Commands::Restart => Ok(()),
         Commands::Status => Ok(()),
     }
+}
+
+fn install() -> Result<(), Box<dyn Error>> {
+    let exec = std::env::current_exe()?;
+    let content = plist::render(&exec.to_string_lossy(), LOG_PATH);
+    plist::write(&content)?;
+
+    println!("kanade: installed and started");
+    Ok(())
+}
+
+fn uninstall() -> Result<(), Box<dyn Error>> {
+    plist::remove()?;
+
+    println!("kanade: uninstalled");
+    Ok(())
 }
