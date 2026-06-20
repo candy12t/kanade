@@ -1,5 +1,6 @@
-use std::{error::Error, sync::Mutex};
+use std::sync::Mutex;
 
+use anyhow::{Result, anyhow};
 use core_foundation::runloop::{CFRunLoop, kCFRunLoopCommonModes};
 use core_graphics::event::{
     CGEvent, CGEventFlags, CGEventTap, CGEventTapLocation, CGEventTapOptions, CGEventTapPlacement,
@@ -15,9 +16,9 @@ const KEYCODE_LEFT_COMMAND: i64 = 0x37;
 /// Right Command (kVK_RightCommand)
 const KEYCODE_RIGHT_COMMAND: i64 = 0x36;
 
-pub fn listen() -> Result<(), Box<dyn Error>> {
+pub fn listen() -> Result<()> {
     if !permission::prompt_for_trust() {
-        return Err("Accessibility permission is required".into());
+        return Err(anyhow!("Accessibility permission is required"));
     }
     let resolver = Mutex::new(TapResolver::new());
 
@@ -46,12 +47,12 @@ pub fn listen() -> Result<(), Box<dyn Error>> {
     );
     let tap = match tap {
         Ok(v) => v,
-        Err(_) => return Err("failed to create event tap".into()),
+        Err(_) => return Err(anyhow!("failed to create event tap")),
     };
 
     let loop_source = match tap.mach_port().create_runloop_source(0) {
         Ok(v) => v,
-        Err(_) => return Err("failed to create runloop source".into()),
+        Err(_) => return Err(anyhow!("failed to create runloop source")),
     };
     let current = CFRunLoop::get_current();
     unsafe {

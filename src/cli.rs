@@ -1,5 +1,4 @@
-use std::error::Error;
-
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 
 use crate::{listener, plist};
@@ -27,7 +26,7 @@ enum Commands {
     Status,
 }
 
-pub fn run() -> Result<(), Box<dyn Error>> {
+pub fn run() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
         Commands::Run => listener::listen(),
@@ -38,7 +37,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     }
 }
 
-fn install() -> Result<(), Box<dyn Error>> {
+fn install() -> Result<()> {
     let exec = std::env::current_exe()?;
     let content = plist::render(&exec.to_string_lossy(), LOG_PATH);
     plist::write(&content)?;
@@ -47,7 +46,7 @@ fn install() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn uninstall() -> Result<(), Box<dyn Error>> {
+fn uninstall() -> Result<()> {
     plist::remove()?;
 
     println!("kanade: uninstalled");

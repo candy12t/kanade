@@ -1,11 +1,12 @@
-use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
+
+use anyhow::Result;
 
 const LABEL: &str = "io.github.candy12t.kanade";
 const TEMPLATE: &str = include_str!("../templates/agent.plist");
 
-pub fn plist_path() -> Result<PathBuf, Box<dyn Error>> {
+pub fn plist_path() -> Result<PathBuf> {
     let home = std::env::var("HOME")?;
     Ok(PathBuf::from(home)
         .join("Library")
@@ -20,12 +21,12 @@ pub fn render(exec: &str, log: &str) -> String {
         .replace("{log}", log)
 }
 
-pub fn write(content: &str) -> Result<(), Box<dyn Error>> {
+pub fn write(content: &str) -> Result<()> {
     let path = plist_path()?;
     fs::write(path, content)?;
     Ok(())
 }
-pub fn remove() -> Result<(), Box<dyn Error>> {
+pub fn remove() -> Result<()> {
     match fs::remove_file(plist_path()?) {
         Ok(()) => Ok(()),
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
