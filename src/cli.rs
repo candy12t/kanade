@@ -22,7 +22,7 @@ enum Commands {
     Uninstall,
     /// Restart the launchd agent (after an update or granting permission)
     Restart,
-    /// Show the launchd agent staus
+    /// Show the launchd agent status
     Status,
 }
 
