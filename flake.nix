@@ -20,17 +20,26 @@
           inherit system;
           overlays = [ rust-overlay.overlays.default ];
         };
+        inherit (pkgs) lib;
         rustToolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
         rustPlatform = pkgs.makeRustPlatform {
           cargo = rustToolchain;
           rustc = rustToolchain;
         };
+        cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
         defaultBuildArgs = {
-          pname = "kanade";
-          version = "0.1.1";
+          pname = cargoToml.package.name;
+          version = cargoToml.package.version;
           src = ./.;
           cargoLock.lockFile = ./Cargo.lock;
           doCheck = false;
+          meta = {
+            description = cargoToml.package.description;
+            homepage = cargoToml.package.homepage;
+            license = lib.getLicenseFromSpdxId cargoToml.package.license;
+            mainProgram = cargoToml.package.name;
+            platforms = lib.platforms.darwin;
+          };
         };
         buildRustPackage = attrs: rustPlatform.buildRustPackage (defaultBuildArgs // attrs);
       in

@@ -2,6 +2,7 @@
 name = "kanade"
 version = "0.1.1"
 edition = "2024"
+description = "Switch macOS input source to 英数/かな with the left/right Command keys"
 repository = "https://github.com/candy12t/kanade"
 homepage = "https://github.com/candy12t/kanade"
 license = "MIT"

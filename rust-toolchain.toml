@@ -9,4 +9,4 @@ components = [
   "rustfmt",
 ]
 profile = "minimal"
-targets = []
+targets = ["aarch64-apple-darwin"]
