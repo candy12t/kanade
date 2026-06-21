@@ -1,6 +1,6 @@
 [package]
 name = "kanade"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "Switch macOS input source to 英数/かな with the left/right Command keys"
 repository = "https://github.com/candy12t/kanade"
