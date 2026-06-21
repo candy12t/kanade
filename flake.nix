@@ -13,7 +13,7 @@
       flake-utils,
       rust-overlay,
     }:
-    flake-utils.lib.eachDefaultSystem (
+    flake-utils.lib.eachSystem [ "aarch64-darwin" ] (
       system:
       let
         pkgs = import nixpkgs {
@@ -38,7 +38,7 @@
             homepage = cargoToml.package.homepage;
             license = lib.getLicenseFromSpdxId cargoToml.package.license;
             mainProgram = cargoToml.package.name;
-            platforms = lib.platforms.darwin;
+            platforms = [ system ];
           };
         };
         buildRustPackage = attrs: rustPlatform.buildRustPackage (defaultBuildArgs // attrs);
