@@ -48,6 +48,7 @@
           packages = [
             rustToolchain
             pkgs.cargo-dist
+            pkgs.cargo-release
           ];
         };
 

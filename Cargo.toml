@@ -6,6 +6,12 @@ description = "Switch macOS input source to 英数/かな with the left/right Co
 repository = "https://github.com/candy12t/kanade"
 homepage = "https://github.com/candy12t/kanade"
 license = "MIT"
+publish = false
+
+# dist must be re-enabled explicitly because `publish = false` opts the
+# package out of dist by default.
+[package.metadata.dist]
+dist = true
 
 [dependencies]
 anyhow = "1.0.102"
